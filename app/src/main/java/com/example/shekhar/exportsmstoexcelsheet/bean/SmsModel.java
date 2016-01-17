@@ -5,19 +5,10 @@ package com.example.shekhar.exportsmstoexcelsheet.bean;
  */
 public class SmsModel {
 
-  private String _id;
   private String address;
   private String message;
-  private String readState;
-  private String timeStamp;
+  private long timeStamp;
 
-  public String get_id() {
-    return _id;
-  }
-
-  public void set_id(String _id) {
-    this._id = _id;
-  }
 
   public String getAddress() {
     return address;
@@ -35,19 +26,11 @@ public class SmsModel {
     this.message = message;
   }
 
-  public String getReadState() {
-    return readState;
-  }
-
-  public void setReadState(String readState) {
-    this.readState = readState;
-  }
-
-  public String getTimeStamp() {
+  public long getTimeStamp() {
     return timeStamp;
   }
 
-  public void setTimeStamp(String timeStamp) {
+  public void setTimeStamp(long timeStamp) {
     this.timeStamp = timeStamp;
   }
 
