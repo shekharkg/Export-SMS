@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
   private ProgressDialog progressDialog;
   private EditText fileNameEt;
   private FloatingActionButton fab;
+  private int totalSMS;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
     String status = null;
 
     String fileName = fileNameEt.getText().toString().trim();
-    if(fileName.isEmpty())
+    if (fileName.isEmpty())
       fileName = String.valueOf(Calendar.getInstance().getTimeInMillis());
     File sdCard = Environment.getExternalStorageDirectory();
     File file = new File(sdCard, fileName + ".xls");
@@ -121,14 +122,16 @@ public class MainActivity extends AppCompatActivity {
         Label address = new Label(0, i, smsModel.getAddress());
         Label message = new Label(1, i, smsModel.getMessage());
         calendar.setTimeInMillis(smsModel.getTimeStamp());
-        Label timeStamp = new Label(2, i, getTime(calendar.get(Calendar.HOUR_OF_DAY),
-            calendar.get(Calendar.MINUTE)) + " - " + getMonthNameFromIndex(calendar.get(Calendar.MONTH),
+        Label time = new Label(2, i, getTime(calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE)));
+        Label date = new Label(3, i, getMonthNameFromIndex(calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.YEAR)));
 
         try {
           sheet.addCell(address);
           sheet.addCell(message);
-          sheet.addCell(timeStamp);
+          sheet.addCell(time);
+          sheet.addCell(date);
         } catch (RowsExceededException e) {
           e.printStackTrace();
         } catch (WriteException e) {
@@ -151,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
       status = e.toString();
     }
 
-    return status == null ? smsModels.size() + " messages are exported to " + fileName : status;
+    return status == null ? smsModels.size() + " out of " + totalSMS
+        + " messages are exported to " + fileName : status;
   }
 
   private List<SmsModel> readAllSms() {
@@ -161,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
     ContentResolver cr = getContentResolver();
 
     Cursor c = cr.query(message, null, null, null, null);
-    int totalSMS = c.getCount();
+    totalSMS = c.getCount();
     if (c.moveToFirst()) {
       for (int i = 0; i < totalSMS; i++) {
 
@@ -170,7 +174,10 @@ public class MainActivity extends AppCompatActivity {
             .getColumnIndexOrThrow("address")));
         smsModel.setMessage(c.getString(c.getColumnIndexOrThrow("body")));
         smsModel.setTimeStamp(Long.parseLong(c.getString(c.getColumnIndexOrThrow("date"))));
-        lstSms.add(smsModel);
+
+        if (Character.isLetter(smsModel.getAddress().charAt(0)))
+          lstSms.add(smsModel);
+
         c.moveToNext();
       }
     } else {
@@ -182,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private String getTime(int hour, int min) {
-    return (hour > 12 ? hour%12 : (hour == 0 ? 12 : hour)) + ":" + min + (hour > 11 ? " pm" : " am");
+    return (hour > 12 ? hour % 12 : (hour == 0 ? 12 : hour)) + ":" + min + (hour > 11 ? " pm" : " am");
   }
 
   private String getMonthNameFromIndex(int index, int date, int year) {
