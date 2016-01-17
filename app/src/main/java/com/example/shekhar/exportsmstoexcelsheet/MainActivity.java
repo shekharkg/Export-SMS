@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onResume() {
     super.onResume();
-    fab.setVisibility(View.GONE);
+    fab.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -121,7 +121,8 @@ public class MainActivity extends AppCompatActivity {
         Label address = new Label(0, i, smsModel.getAddress());
         Label message = new Label(1, i, smsModel.getMessage());
         calendar.setTimeInMillis(smsModel.getTimeStamp());
-        Label timeStamp = new Label(2, i, getMonthNameFromIndex(calendar.get(Calendar.MONTH),
+        Label timeStamp = new Label(2, i, getTime(calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE)) + " - " + getMonthNameFromIndex(calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.YEAR)));
 
         try {
@@ -178,6 +179,10 @@ public class MainActivity extends AppCompatActivity {
     c.close();
 
     return lstSms;
+  }
+
+  private String getTime(int hour, int min) {
+    return (hour > 12 ? hour%12 : (hour == 0 ? 12 : hour)) + ":" + min + (hour > 11 ? " pm" : " am");
   }
 
   private String getMonthNameFromIndex(int index, int date, int year) {
