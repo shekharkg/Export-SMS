@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     return status == null ? smsModels.size() + " out of " + totalSMS
-        + " messages are exported to " + fileName : status;
+        + " messages are exported to " + fileName + ".xls file." : status;
   }
 
   private List<SmsModel> readAllSms() {
